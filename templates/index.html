@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic AI Recommender</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 680px; }
+        h1 { color: #5a4bcf; text-align: center; }
+        form { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] { flex-grow: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+        button { background-color: #5a4bcf; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .results { background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .results h2 { margin-top: 0; }
+        .prompt-info { font-style: italic; color: #666; border-left: 3px solid #5a4bcf; padding-left: 10px; margin-bottom: 15px; }
+        ul { list-style-type: "✅"; padding-left: 20px; }
+        li { padding: 8px 0; border-bottom: 1px solid #eee; }
+        li:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dynamic AI Recommender 🧠</h1>
+        <p style="text-align: center;">Ask me for movie or product recommendations!</p>
+        <form action="/get_recommendation" method="post">
+            <input type="text" name="prompt" placeholder="e.g., recommend movies like Interstellar" required value="{{ prompt or '' }}">
+            <button type="submit">Get Help</button>
+        </form>
+
+        {% if recommendations %}
+            <div class="results">
+                <h2>Here's what I found:</h2>
+                <div class="prompt-info">
+                    You asked: "{{ prompt }}"<br>
+                    I understood it as: <strong>{{ intent }}</strong>
+                </div>
+                <ul>
+                    {% for item in recommendations %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
