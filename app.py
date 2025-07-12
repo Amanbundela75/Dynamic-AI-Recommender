@@ -1,40 +1,30 @@
-# app.py
-
 from flask import Flask, render_template, request
+# हमारे AI लॉजिक वाले फंक्शन को इम्पोर्ट करें
+from main import get_dynamic_recommendation 
 
-# हमारे बनाए हुए फंक्शन्स को इम्पोर्ट करना
-from nlu import get_intent
-from modules.movie_module import get_movie_recommendations
-from modules.product_module import get_product_recommendations
-
+# Flask ऐप को इनिशियलाइज़ करें
 app = Flask(__name__)
 
 @app.route('/')
 def home():
+    """यह फंक्शन होमपेज दिखाता है।"""
     return render_template('index.html')
 
 @app.route('/get_recommendation', methods=['POST'])
-def get_recommendation():
-    prompt = request.form['prompt']
+def handle_recommendation():
+    """यह फॉर्म सबमिशन को हैंडल करता है और AI से जवाब लाता है।"""
+    # यूज़र का प्रॉम्प्ट फॉर्म से निकालें
+    user_prompt = request.form['prompt']
     
-    # 1. यूज़र का इरादा समझो
-    intent = get_intent(prompt)
+    # AI फंक्शन को कॉल करके रिकमेंडेशन पाएं
+    # यह API कॉल्स करेगा, इसलिए इसमें थोड़ा समय लग सकता है
+    ai_response = get_dynamic_recommendation(user_prompt)
     
-    recommendations = []
-    
-    # 2. इरादे के हिसाब से सही मॉड्यूल को कॉल करो
-    if intent == 'recommend_movie':
-        recommendations = get_movie_recommendations(prompt)
-    elif intent == 'find_product':
-        recommendations = get_product_recommendations(prompt)
-    else:
-        recommendations = ["I'm sorry, I don't understand. Please ask about movies or products."]
-        
-    # 3. रिजल्ट को वेबपेज पर भेजो
+    # रिजल्ट को वापस HTML पेज पर भेजें
     return render_template('index.html', 
-                           prompt=prompt, 
-                           intent=intent, 
-                           recommendations=recommendations)
+                           recommendation_text=ai_response, 
+                           prompt=user_prompt)
 
 if __name__ == '__main__':
+    # ऐप को चलाएं
     app.run(debug=True)
