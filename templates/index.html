@@ -4,33 +4,61 @@
     <meta charset="UTF-8">
     <title>Dynamic AI Recommender</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 680px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f0f2f5; color: #333; margin: 0; padding: 20px; }
+        .container { width: 100%; max-width: 900px; margin: auto; }
         h1 { color: #5a4bcf; text-align: center; }
-        form { display: flex; gap: 10px; margin-bottom: 20px; }
-        input[type="text"] { flex-grow: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-        button { background-color: #5a4bcf; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; cursor: pointer; }
-        .results { background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); white-space: pre-wrap; /* यह लाइन AI के फॉर्मेट को बनाए रखेगी */ }
-        .results h2 { margin-top: 0; }
-        .prompt-info { font-style: italic; color: #666; border-left: 3px solid #5a4bcf; padding-left: 10px; margin-bottom: 15px; }
+        form { display: flex; gap: 10px; margin-bottom: 30px; }
+        input[type="text"] { flex-grow: 1; padding: 15px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; }
+        button { background-color: #5a4bcf; color: white; border: none; padding: 15px 25px; border-radius: 10px; font-size: 16px; cursor: pointer; }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .card-content {
+            padding: 15px;
+        }
+        .card-content h3 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .card-content p {
+            font-size: 14px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Dynamic AI Recommender 🧠</h1>
-        <p style="text-align: center;">Ask me anything, I'll find the best recommendations for you!</p>
         <form action="/get_recommendation" method="post">
-            <input type="text" name="prompt" placeholder="e.g., best noise cancelling earbuds under 15000" required value="{{ prompt or '' }}">
-            <button type="submit">Get Help</button>
+            <input type="text" name="prompt" placeholder="e.g., Robin Sharma's best books" required value="{{ prompt or '' }}">
+            <button type="submit">Get Recommendations</button>
         </form>
 
-        {% if recommendation_text %}
-            <div class="results">
-                <h2>Here's what I found:</h2>
-                <div class="prompt-info">
-                    You asked: "{{ prompt }}"
+        {% if recommendations %}
+            <div class="card-grid">
+                {% for item in recommendations %}
+                <div class="card">
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                    <div class="card-content">
+                        <h3>{{ item.title }}</h3>
+                        <p>{{ item.description }}</p>
+                    </div>
                 </div>
-                <p>{{ recommendation_text }}</p>
+                {% endfor %}
             </div>
         {% endif %}
     </div>
